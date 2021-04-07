@@ -2,13 +2,50 @@ from flask import Flask
 import flask
 import os
 from flask import render_template, make_response, request, url_for, session
+import sqlite3
 
 app = flask.Flask(__name__)
 app.config["DEBUG"]=True
 
+# Mise en place de la base de données :
+
+## Création de la base :
+con = sqlite3.connect("projetDevops.db")
+print("Database bien ouverte")
+
+## Rédaction des requêtes SQL :
+con.execute("CREATE TABLE IF NOT EXISTS Dossiers (idDossier INTEGER PRIMARY KEY AUTOINCREMENT, cheminDossierSource TEXT NOT NULL, cheminDossierDestination TEXT NOT NULL)")
+con.execute("CREATE TABLE IF NOT EXISTS Fichiers (idFichier INTEGER PRIMARY KEY AUTOINCREMENT, idDossier INTEGER, nomFichier TEXT, extensionFichier TEXT, sizeFichier INTEGER, date_modif_Fichier DATE, date_create_Fichier DATE, CONSTRAINT fk_idDossier FOREIGN KEY(idDossier) REFERENCES Dossiers(idDossier))")
+
+## Fermer la base après toutes commandes :
+con.close()
+
 @app.route('/accueil')
 def accueil():
     return render_template("accueil.html")
+
+@app.route('/savechemin/', methods=["POST", "GET"])
+def savechemin():
+    msg="msg"
+    if request.method == "POST":
+        try:
+            # on récupère ce qui a été rentré dans la variable dossierSource, dossierDestination :
+            dossierSource = request.form["dossierSource"]
+            dossierDestination = request.form["dossierDestination"]
+            # on effectue la requete dans la base :
+            with sqlite3.connect("projetDevops.db") as con:
+                cur = con.cursor()
+                print("connexion reussi")
+                cur.execute("INSERT INTO Dossiers (cheminDossierSource, cheminDossierDestination) values (?,?)", (dossierSource, dossierDestination))
+                print("insert effectué")
+                con.commit()
+                msg="Les deux chemins ont bien été enregistré dans la base de données"
+        except:
+            # par sécurité on revient à l'état précédent :
+            con.rollback()
+            msg="Nous ne pouvons pas enregistrer les deux chemins"
+        finally:
+            return render_template("comparaison.html", msg=msg)
 
 @app.route('/comparaison/')
 def comparaison():
