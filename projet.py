@@ -71,9 +71,9 @@ def savechemin():
 
 @app.route('/')
 
-@app.route('/comparaison/', methods=["POST", "GET"])
+@app.route('/comparaison/')
 def comparaison():
-    return render_template("comparaison.html", rows=rows)
+    return render_template("comparaison.html")
 
 @app.route('/synchronisation/')
 def synchronisation():
