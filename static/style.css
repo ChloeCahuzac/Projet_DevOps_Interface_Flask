@@ -158,6 +158,11 @@ nav li:hover a {
     text-align: left;
 }
 
+.validationChemin {
+    padding-left: 10px;
+    padding-top: 10px;
+}
+
 /* ########################### COMPARAISON ########################### */
 
 .comparaisonDossier h4 {
