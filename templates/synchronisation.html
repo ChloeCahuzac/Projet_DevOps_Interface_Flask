@@ -12,8 +12,15 @@
 </div>
 
 <div class="buttonSynchro">
-    <input type="button" name="Submit" value="Synchronisation" onclick="itv = setInterval(function(){ modifValues(); },40)"/>
-    <input type="button" name="Submit" value="Stopper" onclick="clearInterval(itv)" />
+    <input type="button" name="Submit" value="Synchronisation" 
+    onclick="itv = setInterval(function(){ modifValues(); },40)"/>
+    <input type="button" name="Submit" value="Stopper"
+     onclick= "stop()" />
+</div>
+
+<br>
+<div id="etatSynchro">
+    
 </div>
 
 
@@ -27,11 +34,25 @@
         var val = $('#progress progress').attr('value');
         if(val>=100){val=0;}
         var newVal = val*1+0.25;
-        var txt = Math.floor(newVal)+'%';      
-        
+        var txt = Math.floor(newVal)+'%'
+
         $('#progress progress').attr('value',newVal).text(txt);
         $('#progress strong').html(txt);
     }
+
+    function stop(){
+        var txt;
+        var r = confirm("la synchronisation est sur pause.\n Voulez-vous rependre ?");
+        if (r == true) {
+            txt = "la sychronisation à repris son execution";
+        } else {
+            alert("la synchronisation est annulée");
+            document.location.reload();
+        }
+        document.getElementById("etatSynchro").innerHTML = txt;
+    }
+  
+
 
 </script>
 
