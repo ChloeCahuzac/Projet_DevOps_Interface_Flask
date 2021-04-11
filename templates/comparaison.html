@@ -2,85 +2,103 @@
 
 {% block corps %}
 
-<h3>{{msg}}</h3>
+<h4>{{msg}}</h4>
 
-<table border="5">
-    <thead>
-        <td>ID</td>
-        <td>Chemin dossier Source</td>
-        <td>Chemin dossier Destination</td>
-    </thead>
-    {% for row in rows %}
-    <tr>
-        <td>{{row["idDossier"]}}</td>
-        <td>{{row["cheminDossierSource"]}}</td>
-        <td>{{row["cheminDossierDestination"]}}</td>
-    </tr>
-    {% endfor %}
-</table>
+<label>Sélectionnez un filtre si besoin avant de comparer les deux dossiers :</label>
+<div class="filtre">
+    <div class="select">
+        <select name="filtres">
+            <option value="">--Sélectionner un filtre--</option>
+            <option value="jpg">.jpg</option>
+            <option value="png">.png</option>
+            <option value="pdf">.pdf</option>
+            <option value="xsl">.xsl</option>
+            <option value="html">.html</option>
+            <option value="txt">.txt</option>
+        </select>
+    </div>
+
+    <div class="check">
+        <input type="checkbox" id="inclure" name="inclure" checked>
+        <label for="inclure">Inclure</label>
+        <input type="checkbox" id="exclure" name="exclure">
+        <label for="exclure">Exclure</label>
+    </div>
+</div>
+
+<div class="buttonComparaison">
+    <button class="button">Appliquer le filtre</button>
+</div>
 
 
 <form action="/comparaison/" method="POST">
+    <h4>Affichage de la comparaison entre les deux dossiers :</h4>
     <div class="comparaisonDossier">
-        <h4>Affichage de la comparaison des deux dossiers ci-dessous :</h4>
-        <!-- A compléter avec ce qu'on récupérera à l'intérieur des répertoires : -->
-        <div class="comparaisonFichier">
-            <table class="tab1">
-                {% for row in rows %}    
-                <tr>
-                    <th colspan="3">{{row["cheminDossierSource"]}}</th>
-                </tr>
-                {% endfor %}
-                {% for files in listeFich1 %}
-                <tr>
-                    <td>{{files}}</td>
-                    <td>Taille1</td>
-                    <td>Date de modif 1</td>
-                </tr>
-                {% endfor %}
-            </table>
-            <table class="tab2">
-                {% for row in rows %}
-                <tr>
-                    <th colspan="3">{{row["cheminDossierDestination"]}}</th>
-                </tr>
-                {% endfor %}
-                {% for files in listeFich2 %}
-                <tr>
-                    <td>{{files}}</td>
-                    <td>Taille1</td>
-                    <td>Date de modif 1</td>
-                </tr>
-                {% endfor %}
-            </table>
-        </div>
+        <table class="dossierSource">
+            <thead>
+                <th>ID</th>
+                <th>Chemin dossier Source</th>
+            </thead>
+            {% for row in row1 %}
+            <tr>
+                <td>{{row["idDossierSource"]}}</td>
+                <td>{{row["cheminDossierSource"]}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        
+        <table class="dossierDest">
+            <thead>
+                <th>ID</th>
+                <th>Chemin dossier Source</th>
+            </thead>
+            {% for row in row2 %}
+            <tr>
+                <td>{{row["idDossierDest"]}}</td>
+                <td>{{row["cheminDossierDest"]}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="comparaisonFichier">
+        <table class="tab1">
+            <tr>
+                <th>Nom</th>
+                <th>Extension</th>
+                <th>Taille</th>
+                <th>Date création</th>
+                <th>Date modification</th>
+            </tr>
 
-        <h4>Sélectionnez un filtre si besoin pour actualiser la comparaison ci-dessus</h4>
-        <label>Choisissez un filtre :</label>
-        <div class="filtre">
-            <div class="select">
-                <select name="filtres">
-                    <option value="">--Sélectionner un filtre--</option>
-                    <option value="jpg">.jpg</option>
-                    <option value="png">.png</option>
-                    <option value="pdf">.pdf</option>
-                    <option value="xsl">.xsl</option>
-                    <option value="html">.html</option>
-                    <option value="txt">.txt</option>
-                </select>
-            </div>
-
-            <div class="check">
-                <input type="checkbox" id="inclure" name="inclure" checked>
-                <label for="inclure">Inclure</label>
-                <input type="checkbox" id="exclure" name="exclure">
-                <label for="exclure">Exclure</label>
-            </div>
-        </div>
-
-        <div class="buttonComparaison">
-            <button class="button">Appliquer le filtre</button>
-        </div>
+            {% for files in rowsSource %}
+            <tr>
+                <td>{{files["nomFichier"]}}</td>
+                <td>{{files["extensionFichier"]}}</td>
+                <td>{{files["sizeFichier"]}}</td>
+                <td>{{files["date_create_Fichier"]}}</td>
+                <td>{{files["date_modif_Fichier"]}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <table class="tab2">
+            <tr>
+                <th>Nom</th>
+                <th>Extension</th>
+                <th>Taille</th>
+                <th>Date création</th>
+                <th>Date modification</th>
+            </tr>
+            
+            {% for files in rowsDestination %}
+            <tr>
+                <td>{{files["nomFichier"]}}</td>
+                <td>{{files["extensionFichier"]}}</td>
+                <td>{{files["sizeFichier"]}}</td>
+                <td>{{files["date_create_Fichier"]}}</td>
+                <td>{{files["date_modif_Fichier"]}}</td>
+            </tr>
+            {% endfor %}
+        </table>
     </div>
 </form>
 
