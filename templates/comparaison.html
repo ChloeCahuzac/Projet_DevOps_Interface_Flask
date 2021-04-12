@@ -2,111 +2,93 @@
 
 {% block corps %}
 
-<h4>{{msg}}</h4>
+<h5>{{msg}}</h5>
 
-<label>Sélectionnez un filtre si besoin avant de comparer les deux dossiers :</label>
-<div class="filtre">
-    <div class="select">
-        <select name="filtres">
-            <option value="">--Sélectionner un filtre--</option>
-            <option value="jpg">.jpg</option>
-            <option value="png">.png</option>
-            <option value="pdf">.pdf</option>
-            <option value="xsl">.xsl</option>
-            <option value="html">.html</option>
-            <option value="txt">.txt</option>
-        </select>
-    </div>
-
-    <div class="check">
-        <input type="checkbox" id="inclure" name="inclure" checked>
-        <label for="inclure">Inclure</label>
-        <input type="checkbox" id="exclure" name="exclure">
-        <label for="exclure">Exclure</label>
-    </div>
+<h4>Affichage de la comparaison entre les deux dossiers :</h4>
+<div class="comparaisonDossier">
+    <table class="dossierSource">
+        <thead>
+            <th>ID</th>
+            <th>Chemin dossier Source</th>
+        </thead>
+        {% for row in row1 %}
+        <tr>
+            <td>{{row["idDossierSource"]}}</td>
+            <td>{{row["cheminDossierSource"]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <table class="dossierDest">
+        <thead>
+            <th>ID</th>
+            <th>Chemin dossier Source</th>
+        </thead>
+        {% for row in row2 %}
+        <tr>
+            <td>{{row["idDossierDest"]}}</td>
+            <td>{{row["cheminDossierDest"]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </div>
+<div class="comparaisonFichier">
+    <table class="tab1">
+        <tr>
+            <th>Nom</th>
+            <th>Extension</th>
+            <th>Taille</th>
+            <th>Date création</th>
+            <th>Date modification</th>
+        </tr>
 
-<div class="buttonComparaison">
-    <button class="button">Appliquer le filtre</button>
-</div>
-
-
-<form action="/comparaison/" method="POST">
-    <h4>Affichage de la comparaison entre les deux dossiers :</h4>
-    <div class="comparaisonDossier">
-        <table class="dossierSource">
-            <thead>
-                <th>ID</th>
-                <th>Chemin dossier Source</th>
-            </thead>
-            {% for row in row1 %}
-            <tr>
-                <td>{{row["idDossierSource"]}}</td>
-                <td>{{row["cheminDossierSource"]}}</td>
-            </tr>
-            {% endfor %}
-        </table>
+        {% for files in rowsSource %}
+        <tr>
+            <td>{{files["nomFichier"]}}</td>
+            <td>{{files["extensionFichier"]}}</td>
+            <td>{{files["sizeFichier"]}}</td>
+            <td>{{files["date_create_Fichier"]}}</td>
+            <td>{{files["date_modif_Fichier"]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <table class="tab2">
+        <tr>
+            <th>Nom</th>
+            <th>Extension</th>
+            <th>Taille</th>
+            <th>Date création</th>
+            <th>Date modification</th>
+        </tr>
         
-        <table class="dossierDest">
-            <thead>
-                <th>ID</th>
-                <th>Chemin dossier Source</th>
-            </thead>
-            {% for row in row2 %}
-            <tr>
-                <td>{{row["idDossierDest"]}}</td>
-                <td>{{row["cheminDossierDest"]}}</td>
-            </tr>
-            {% endfor %}
-        </table>
+        {% for files in rowsDestination %}
+        <tr>
+            <td>{{files["nomFichier"]}}</td>
+            <td>{{files["extensionFichier"]}}</td>
+            <td>{{files["sizeFichier"]}}</td>
+            <td>{{files["date_create_Fichier"]}}</td>
+            <td>{{files["date_modif_Fichier"]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div class="navcomparaison">
+        <a href="/accueil">
+            <button>Annuler</button>
+        </a>
+        <a href="/filtre/">
+            <button>Appliquer un filtre</button>
+        </a>
+        <a href="/synchronisation/">
+            <button>Valider</button>
+        </a>
     </div>
-    <div class="comparaisonFichier">
-        <table class="tab1">
-            <tr>
-                <th>Nom</th>
-                <th>Extension</th>
-                <th>Taille</th>
-                <th>Date création</th>
-                <th>Date modification</th>
-            </tr>
-
-            {% for files in rowsSource %}
-            <tr>
-                <td>{{files["nomFichier"]}}</td>
-                <td>{{files["extensionFichier"]}}</td>
-                <td>{{files["sizeFichier"]}}</td>
-                <td>{{files["date_create_Fichier"]}}</td>
-                <td>{{files["date_modif_Fichier"]}}</td>
-            </tr>
-            {% endfor %}
-        </table>
-        <table class="tab2">
-            <tr>
-                <th>Nom</th>
-                <th>Extension</th>
-                <th>Taille</th>
-                <th>Date création</th>
-                <th>Date modification</th>
-            </tr>
-            
-            {% for files in rowsDestination %}
-            <tr>
-                <td>{{files["nomFichier"]}}</td>
-                <td>{{files["extensionFichier"]}}</td>
-                <td>{{files["sizeFichier"]}}</td>
-                <td>{{files["date_create_Fichier"]}}</td>
-                <td>{{files["date_modif_Fichier"]}}</td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-</form>
+</div>
 
 <div class="navigation">
-    <div class="navAcc"v>
+    <div class="navAcc">
         <a href="/accueil">&lt&lt Accueil</a>
     </div>
-    <div class="navSync"v>
+    <div class="navSync">
         <a href="/synchronisation">Synchronisation &gt&gt</a>
     </div>
 </div>
