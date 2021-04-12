@@ -244,33 +244,31 @@ th, td {
     background-color: #fff;
 }
 
+.navcomparaison a {
+    text-decoration: none;
+}
+
 /* ########################### FILTRE ########################### */
 
-.filtre select {
+.check input {
+    margin-top: 10px;
     margin-left: 10px;
+    margin-right: 0px;
+    padding-right: 0px;
+}
+
+input[type="checkbox"]+span {
+    margin-left: 2px;
+    margin-right: 10px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    color: #424558;
+}
+
+.buttonFiltre {
     margin-top: 10px;
-}
-
-.filtre {
-    display: grid;
-    grid-template-areas: "left right";
-    grid-template-columns: 1fr 5fr;
-}
-
-.select {
-    grid-area: left;
-    text-align: left;
-}
-
-.check {
-    grid-area: right;
-    text-align: left;
-    margin-top: 10px;
-}
-
-.check label {
-    margin-left: 0px;
-    text-decoration: none;
+    padding-left: 10px;
 }
 
 /* ########################### SYNCHRONISATION ########################### */
