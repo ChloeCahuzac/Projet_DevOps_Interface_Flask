@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% block corps %}
+
+<h5>{{msg}}</h5>
+
+<h4>Affichage de la comparaison entre les deux dossiers :</h4>
+<div class="comparaisonDossier">
+    <table class="dossierSource">
+        <thead>
+            <th>ID</th>
+            <th>Chemin dossier Source</th>
+        </thead>
+        {% for row in id1 %}
+        <tr>
+            <td>{{row["idDossierSource"]}}</td>
+            <td>{{row["cheminDossierSource"]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <table class="dossierDest">
+        <thead>
+            <th>ID</th>
+            <th>Chemin dossier Source</th>
+        </thead>
+        {% for row in id2 %}
+        <tr>
+            <td>{{row["idDossierDest"]}}</td>
+            <td>{{row["cheminDossierDest"]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+<div class="comparaisonFichier">
+    <table class="tab1">
+        <tr>
+            <th>Nom</th>
+            <th>Extension</th>
+            <th>Taille</th>
+            <th>Date création</th>
+            <th>Date modification</th>
+        </tr>
+
+        {% for files in fichSource %}
+        <tr>
+            <td>{{files["nomFichier"]}}</td>
+            <td>{{files["extensionFichier"]}}</td>
+            <td>{{files["sizeFichier"]}}</td>
+            <td>{{files["date_create_Fichier"]}}</td>
+            <td>{{files["date_modif_Fichier"]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <table class="tab2">
+        <tr>
+            <th>Nom</th>
+            <th>Extension</th>
+            <th>Taille</th>
+            <th>Date création</th>
+            <th>Date modification</th>
+        </tr>
+        
+        {% for files in fichDest %}
+        <tr>
+            <td>{{files["nomFichier"]}}</td>
+            <td>{{files["extensionFichier"]}}</td>
+            <td>{{files["sizeFichier"]}}</td>
+            <td>{{files["date_create_Fichier"]}}</td>
+            <td>{{files["date_modif_Fichier"]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="navigation">
+    <div class="navAcc">
+        <a href="/accueil">&lt&lt Accueil</a>
+    </div>
+    <div class="navSync">
+        <a href="/synchronisation">Synchronisation &gt&gt</a>
+    </div>
+</div>
+
+{% endblock %}
