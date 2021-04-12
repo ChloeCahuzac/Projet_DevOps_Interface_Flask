@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block corps %}
+
+<form action="/savefiltre/" method="POST">
+    <div class="filtre">
+        <h4>Sélectionnez une extension de fichier et comparer les deux dossiers :</h4>
+        <div class="check">
+            <input type="checkbox" id="docx" name="docx"><span>.docx</span>
+            <input type="checkbox" id="exe" name="exe"><span>.exe</span>
+            <input type="checkbox" id="html" name="html"><span>.html</span>
+            <input type="checkbox" id="jpg" name="jpg"><span>.jpg</span>
+            <input type="checkbox" id="pdf" name="pdf"><span>.pdf</span>
+            <input type="checkbox" id="png" name="png"><span>.png</span>
+            <input type="checkbox" id="ppt" name="ppt"><span>.ppt</span>
+            <input type="checkbox" id="py" name="py"><span>.py</span>
+            <input type="checkbox" id="txt" name="txt"><span>.txt</span>
+            <input type="checkbox" id="xlsx" name="xlsx"><span>.xlsx</span>
+        </div>
+        <div class="buttonFiltre">
+            <button class="button">Valider</button>
+        </div>
+    </div>
+</form>
+
+<div class="navigation">
+    <div class="navAcc">
+        <a href="/accueil">&lt&lt Accueil</a>
+    </div>
+    <div class="navSync">
+        <a href="/synchronisation">Synchronisation &gt&gt</a>
+    </div>
+</div>
+
+{% endblock %}
