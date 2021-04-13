@@ -138,7 +138,7 @@ def comparaison():
             cur = con.cursor()
             rowsSource = cur.execute("SELECT * FROM FichiersSource where idDossierSource=?", (idSource,)).fetchall()
             rowsDestination = cur.execute("SELECT * FROM FichiersDestination where idDossierDest=?", (idDest,)).fetchall()
-            msg="Voici la comparaison de la dernière sélection de dossiers renseignée"
+            msg="Voici la comparaison de la dernière sélection de dossiers renseignés"
         except:
             msg="Nous ne pouvons pas afficher les fichiers, veuillez renseigner les dossiers dans l'onglet accueil"
         finally:
@@ -225,6 +225,99 @@ def savefiltre():
 @app.route('/synchronisation/')
 def synchronisation():
     return render_template("synchronisation.html")
+
+@app.route('/save_synchronisation/', methods=["POST", "GET"])
+def save_synchronisation():
+    if request.method == "POST":
+        try:
+            # Récupération des checkbox renseignés par l'utilisateur :
+            checkactive = request.form.getlist('mycheckbox')
+            for ext in checkactive:
+                print("checkactive :", ext)
+            # Récupération des chemins des dossiers rentrés par l'utilisateur dans la page accueil.html pour permettre leur affichage :
+            con=sqlite3.connect("databaseProjet.db")
+            con.row_factory=sqlite3.Row
+            cur = con.cursor()
+            row1 = cur.execute("SELECT * FROM DossiersSource ORDER BY idDossierSource DESC LIMIT 1").fetchall()
+            row2 = cur.execute("SELECT * FROM DossiersDestination ORDER BY idDossierDest DESC LIMIT 1").fetchall()
+            con.close()
+            # Récupération des id des deux dossiers source et destination :
+            with sqlite3.connect("databaseProjet.db") as con:
+                cur = con.cursor()
+                id1 = cur.execute("SELECT * FROM DossiersSource ORDER BY idDossierSource DESC LIMIT 1").fetchall()
+                id2 = cur.execute("SELECT * FROM DossiersDestination ORDER BY idDossierDest DESC LIMIT 1").fetchall()
+                for row in id1:
+                    idSource = str(row[0])
+                    cheminDossierSource = str(row[1])
+                for row in id2:
+                    idDest = str(row[0])
+                    cheminDossierDest = str(row[1])
+                # Récupération des données des fichiers :
+                id3 = cur.execute("SELECT * FROM FichiersSource where idDossierSource=?", (idSource,)).fetchall()
+                id4 = cur.execute("SELECT * FROM FichiersDestination where idDossierDest=?", (idDest,)).fetchall()
+                extFichierSource = []
+                extFichierDest = []
+                nameFichierDest = []
+                dateModifFichierDest = []
+                for row in id3:
+                    extFichierSource.append(str(row[3]))
+                for row in id4:
+                    extFichierDest.append(str(row[3]))
+                    nameFichierDest.append(str(row[2]))
+                    dateModifFichierDest.append(str(row[6]))
+                #Synchronisation en faisant un INSERT dans la base de données vers le dossier Destination :
+                for elementSource in id3:
+                    if elementSource[2] not in nameFichierDest:
+                        cur.execute("INSERT INTO FichiersDestination (idDossierDest, nomFichier, extensionFichier, sizeFichier, date_create_Fichier, date_modif_Fichier) values (?,?,?,?,?,?)", (elementSource[1], elementSource[2], elementSource[3], elementSource[4], elementSource[5], elementSource[6]))
+                        print("insertion réussi")
+                    else:
+                        print("pas inséré car déjà dans la base")
+                con.commit() 
+                msg="La synchronisation a bien était effectuée"
+        except:
+            msg="Impossible d'effectuer la synchronisation"
+        finally:
+            # Copiage des fichiers en local :
+
+            # Sélection des fichiers dans le dossier local :
+            FichiersS = selectFichier(cheminDossierSource)
+            FichiersD = selectFichier(cheminDossierDest)
+            nameFichier1 = []
+            nameFichier2 = []
+            # Récuération des noms et ajout de leur extension :
+            for cle, valeur1 in FichiersS.items():
+                nameFichier1.append(valeur1[0] + "." + valeur1[1])
+            print("namefichier1 : ", nameFichier1)
+
+            for cle, valeur2 in FichiersD.items():
+                nameFichier2.append(valeur2[0] + "." + valeur2[1])
+            print("namefichier2 : ", nameFichier2)
+            # Copie des fichiers :
+            for nameSource in nameFichier1:
+                if nameSource in nameFichier2:
+                    print("le fichier existe déjà")
+                else:
+                    cheminfinal = (cheminDossierDest + "/" + nameSource)
+                    cheminsource = (cheminDossierSource + "/" + nameSource)
+                    shutil.copyfile(cheminsource, cheminfinal)
+                    print("le fichier n'existe pas, il a donc était copié")
+
+            # for nameDest in nameFichier2:
+            #     if nameDest not in nameFichier1:
+            #         os.remove(cheminDossierDest + "/" + nameDest)
+            #         print("fichier sup")
+
+            # Affichage des fichiers provenant des dossiers renseignés après synchronisation :
+            con=sqlite3.connect("databaseProjet.db")
+            con.row_factory=sqlite3.Row
+            cur = con.cursor()
+            fichSource = cur.execute("SELECT * FROM FichiersSource WHERE idDossierSource=?", (idSource,)).fetchall()
+            fichDest = cur.execute("SELECT * FROM FichiersDestination WHERE idDossierDest=? ORDER BY nomFichier ASC", (idDest,)).fetchall()
+            return render_template("synchronisation_save.html", msg=msg, row1=row1, row2=row2, fichSource=fichSource, fichDest=fichDest)
+
+    if request.method == "GET":
+        msg="Une erreure s'est produite, veuillez recommencer"
+        return render_template("synchronisation.html", msg=msg)
 
 
 if __name__ == "__main__":
