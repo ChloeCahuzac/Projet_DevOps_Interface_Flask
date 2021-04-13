@@ -4,7 +4,7 @@
 
 <h5>{{msg}}</h5>
 
-<h4>Affichage de la comparaison entre les deux dossiers :</h4>
+<h4>Affichage de la comparaison entre les deux dossiers</h4>
 <div class="comparaisonDossier">
     <table class="dossierSource">
         <thead>
@@ -22,7 +22,7 @@
     <table class="dossierDest">
         <thead>
             <th>ID</th>
-            <th>Chemin dossier Source</th>
+            <th>Chemin dossier Destination</th>
         </thead>
         {% for row in row2 %}
         <tr>
@@ -38,8 +38,8 @@
             <th>Nom</th>
             <th>Extension</th>
             <th>Taille</th>
-            <th>Date création</th>
-            <th>Date modification</th>
+            <th>Date de création</th>
+            <th>Date de modification</th>
         </tr>
 
         {% for files in rowsSource %}
@@ -57,8 +57,8 @@
             <th>Nom</th>
             <th>Extension</th>
             <th>Taille</th>
-            <th>Date création</th>
-            <th>Date modification</th>
+            <th>Date de création</th>
+            <th>Date de modification</th>
         </tr>
         
         {% for files in rowsDestination %}
@@ -72,9 +72,6 @@
         {% endfor %}
     </table>
     <div class="navcomparaison">
-        <a href="/accueil">
-            <button>Annuler</button>
-        </a>
         <a href="/filtre/">
             <button>Appliquer un filtre</button>
         </a>
@@ -87,9 +84,6 @@
 <div class="navigation">
     <div class="navAcc">
         <a href="/accueil">&lt&lt Accueil</a>
-    </div>
-    <div class="navSync">
-        <a href="/synchronisation">Synchronisation &gt&gt</a>
     </div>
 </div>
 
