@@ -11,7 +11,7 @@
             <th>ID</th>
             <th>Chemin dossier Source</th>
         </thead>
-        {% for row in id1 %}
+        {% for row in row1 %}
         <tr>
             <td>{{row["idDossierSource"]}}</td>
             <td>{{row["cheminDossierSource"]}}</td>
@@ -24,7 +24,7 @@
             <th>ID</th>
             <th>Chemin dossier Source</th>
         </thead>
-        {% for row in id2 %}
+        {% for row in row2 %}
         <tr>
             <td>{{row["idDossierDest"]}}</td>
             <td>{{row["cheminDossierDest"]}}</td>
@@ -71,6 +71,14 @@
         </tr>
         {% endfor %}
     </table>
+    <div class="navcomparaison">
+        <a href="/filtre">
+            <button>Changer de filtre</button>
+        </a>
+        <a href="/synchronisation/">
+            <button>Valider</button>
+        </a>
+    </div>
 </div>
 
 <div class="navigation">
