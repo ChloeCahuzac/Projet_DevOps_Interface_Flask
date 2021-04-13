@@ -319,12 +319,10 @@ input[type="checkbox"]+span {
     margin-bottom: 0px;
 }
 
-.buttonSynchro input[type="button"] {
+.buttonSynchro {
     padding: 5px;
-    margin-top: 20px;
-    cursor: pointer;
-    text-align: center;
-    position: relative;
+    margin-top: 10px;
+    margin-left: 5px;
 }
 
 /* ########################### PROGRESS BAR ########################### */
@@ -332,15 +330,9 @@ input[type="checkbox"]+span {
 #progress {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     padding-left: 10px;
-    margin-top: 0px;
+    margin-top: 10px;
 }
 
 .synchronisationChargement label {
     text-decoration: none;
-}
-
-.buttonSynchro input {
-    margin-left: 10px;
-    padding-top: 0px;
-    margin-top: 10px;
 }
