@@ -73,7 +73,7 @@ def comparaison():
                 cur.execute("INSERT INTO DossiersSource (cheminDossierSource, chemintest1) VALUES (?, ?)", (dossierSource, "NULL"))
                 cur.execute("INSERT INTO DossiersDestination (cheminDossierDest, chemintest2) VALUES (?, ?)", (dossierDestination, "NULL"))
                 con.commit()
-                msg="Les deux chemins ont été enregistré dans la base de données, vous pouvez appliquer un filtre avant de valider la comparaison : "
+                msg="Les deux chemins ont bien été enregistré dans la base de données, ci-dessous leur comparaison. Vous pouvez appliquer un filtre avant de valider pour la synchronisation : "
         except:
             # Par sécurité, revient à l'état précédent :
             con.rollback()
@@ -115,7 +115,34 @@ def comparaison():
             return render_template("comparaison.html", msg=msg, row1=row1, row2=row2, rowsSource=rowsSource, rowsDestination=rowsDestination)
 
     if request.method == "GET":
-        return render_template("comparaison.html")
+        try:
+            # Récupération des chemins des dossiers rentrés par l'utilisateur dans la page accueil.html pour permettre leur affichage :
+            con=sqlite3.connect("databaseProjet.db")
+            con.row_factory=sqlite3.Row
+            cur = con.cursor()
+            row1 = cur.execute("SELECT * FROM DossiersSource ORDER BY idDossierSource DESC LIMIT 1").fetchall()
+            row2 = cur.execute("SELECT * FROM DossiersDestination ORDER BY idDossierDest DESC LIMIT 1").fetchall()
+            con.close()
+            # Récupération des id des deux dossiers source et destination :
+            with sqlite3.connect("databaseProjet.db") as con:
+                cur = con.cursor()
+                id1 = cur.execute("SELECT * FROM DossiersSource ORDER BY idDossierSource DESC LIMIT 1").fetchall()
+                id2 = cur.execute("SELECT * FROM DossiersDestination ORDER BY idDossierDest DESC LIMIT 1").fetchall()
+                for row in id1:
+                    idSource = str(row[0])
+                for row in id2:
+                    idDest = str(row[0])
+            # Affichage des fichiers provenant des dossiers renseignés :
+            con=sqlite3.connect("databaseProjet.db")
+            con.row_factory=sqlite3.Row
+            cur = con.cursor()
+            rowsSource = cur.execute("SELECT * FROM FichiersSource where idDossierSource=?", (idSource,)).fetchall()
+            rowsDestination = cur.execute("SELECT * FROM FichiersDestination where idDossierDest=?", (idDest,)).fetchall()
+            msg="Voici la comparaison de la dernière sélection de dossiers renseignée"
+        except:
+            msg="Nous ne pouvons pas afficher les fichiers, veuillez renseigner les dossiers dans l'onglet accueil"
+        finally:
+            return render_template("comparaison.html", msg=msg, row1=row1, row2=row2, rowsSource=rowsSource, rowsDestination=rowsDestination)
 
 @app.route('/filtre/')
 def filtre():
@@ -126,59 +153,42 @@ def savefiltre():
     msg="msg"
     if request.method == "POST":
         try:
+            # Récupération des checkbox renseignés par l'utilisateur :
             checkactive = request.form.getlist('mycheckbox')
-            print(checkactive)
-
+            # Récupération des chemins des dossiers rentrés par l'utilisateur dans la page accueil.html pour permettre leur affichage :
             con=sqlite3.connect("databaseProjet.db")
             con.row_factory=sqlite3.Row
             cur = con.cursor()
             row1 = cur.execute("SELECT * FROM DossiersSource ORDER BY idDossierSource DESC LIMIT 1").fetchall()
-            print("select 1 effectué")
             row2 = cur.execute("SELECT * FROM DossiersDestination ORDER BY idDossierDest DESC LIMIT 1").fetchall()
-            print("select 2 effectué")
             con.close()
-
+            # Récupération des id des deux dossiers source et destination :
             with sqlite3.connect("databaseProjet.db") as con:
-                # Récupération des id des deux dossiers source et destination :
                 cur = con.cursor()
-                print("connexion réussi")
                 id1 = cur.execute("SELECT * FROM DossiersSource ORDER BY idDossierSource DESC LIMIT 1").fetchall()
-                print("select 3 effectué")
                 id2 = cur.execute("SELECT * FROM DossiersDestination ORDER BY idDossierDest DESC LIMIT 1").fetchall()
-                print("select 4 effectué")
                 for row in id1:
                     idSource = str(row[0])
                     dossierSource = str(row[1])
-                    print(idSource)
-                    print(dossierSource)
                 for row in id2:
                     idDest = str(row[0])
                     dossierDestination = str(row[1])
-                    print(idDest)
-                    print(dossierDestination)
                     
                 id3 = cur.execute("SELECT idFichier FROM FichiersSource where idDossierSource=?", (idSource,)).fetchall()
-                print("select 3 effectué")
                 id4 = cur.execute("SELECT idFichier FROM FichiersDestination where idDossierDest=?", (idDest,)).fetchall()
-                print("select 4 effectué")
                 idFichierSource = []
                 idFichierDest = []
                 for row in id3:
                     idFichierSource.append(str(row[0]))
-                print("id fichier source :", idFichierSource)
                 for row in id4:
                     idFichierDest.append(str(row[0]))
-                print(idFichierDest)
 
                 # Suppression de l'ancienne table :
                 cur = con.cursor()
-                print("connexion 2 réussi avant suppresion")
                 for element in idFichierSource:
                     cur.execute("DELETE FROM FichiersSource where idFichier=?", (int(element),))
-                print("la table DossiersSource a bien était supprimée")
                 for element in idFichierDest:
                     cur.execute("DELETE FROM FichiersDestination where idFichier=?", (int(element),))
-                print("la table DossiersDestination a bien était supprimée")
         except:
             con.rollback()
             msg="Nous ne pouvons pas appliquer le filtre"
@@ -193,24 +203,24 @@ def savefiltre():
                     for ext in checkactive:
                         if valeur[1] == ext:
                             cur.execute("INSERT INTO FichiersSource (idDossierSource, nomFichier, extensionFichier, sizeFichier, date_create_Fichier, date_modif_Fichier) values (?,?,?,?,?,?)", (int(idSource), valeur[0], valeur[1], valeur[2], valeur[3], valeur[4]))
-                print("insert 1 effectué")
                 for cle, valeur in FichiersD.items():
                     for ext in checkactive:
                         if valeur[1] == ext:
                             cur.execute("INSERT INTO FichiersDestination (idDossierDest, nomFichier, extensionFichier, sizeFichier, date_create_Fichier, date_modif_Fichier) values (?,?,?,?,?,?)", (int(idDest), valeur[0], valeur[1], valeur[2], valeur[3], valeur[4]))
-                print("insert 2 effectué")
-                
                 con.commit()
                 msg="Le filtre a bien été pris en compte, ci-dessous la comparaison des deux dossiers :"
+                # Affichage des fichiers provenant des dossiers renseignés avec application du filtre :
                 con=sqlite3.connect("databaseProjet.db")
-                print("connexion finale réussi")
                 con.row_factory=sqlite3.Row
                 cur = con.cursor()
                 fichSource = cur.execute("SELECT * FROM FichiersSource WHERE idDossierSource=?", (idSource,)).fetchall()
-                print("select 1 réussi")
                 fichDest = cur.execute("SELECT * FROM FichiersDestination WHERE idDossierDest=?", (idDest,)).fetchall()
-                print("select 2 réussi")
+
             return render_template("filtre_comparaison.html", msg=msg, row1=row1, row2=row2, fichSource=fichSource, fichDest=fichDest)
+
+    if request.method == "GET":
+        # S'il y a un raffraichissement de la page, retourne sur la méthode GET de la page comparaison :
+        return comparaison()
 
 @app.route('/synchronisation/')
 def synchronisation():
