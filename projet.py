@@ -18,6 +18,7 @@ with open('./data/database.sql') as f:
     conn.executescript(f.read())
 conn.close()
 
+# Fonction qui permet de convertir la taille d'un fichier :
 def convert_size(size):
    if size == 0:
        return "0 B"
@@ -27,7 +28,9 @@ def convert_size(size):
    s = round(size / p, 2)
    return "%s %s" % (s, size_name[i])
 
+# Fonction qui permet de récupérer toutes les données d'un fichier :
 def selectFichier(chemin):
+    # récupération des fichiers provenant du dossier renseigné dans une liste :
     listeFich = os.listdir(chemin)
     dictFichier = {}
     select = []
@@ -51,6 +54,7 @@ def selectFichier(chemin):
         select = []
     return dictFichier
 
+# Création des différents route :
 @app.route('/accueil')
 def accueil():
     return render_template("accueil.html")
@@ -69,9 +73,9 @@ def comparaison():
                 cur.execute("INSERT INTO DossiersSource (cheminDossierSource, chemintest1) VALUES (?, ?)", (dossierSource, "NULL"))
                 cur.execute("INSERT INTO DossiersDestination (cheminDossierDest, chemintest2) VALUES (?, ?)", (dossierDestination, "NULL"))
                 con.commit()
-                msg="Les deux chemins ont bien été enregistré dans la base de données, vueillez cliquer sur 'Appliquer le filtre' pour comparer : "
+                msg="Les deux chemins ont été enregistré dans la base de données, vous pouvez appliquer un filtre avant de valider la comparaison : "
         except:
-            # par sécurité on revient à l'état précédent :
+            # Par sécurité, revient à l'état précédent :
             con.rollback()
             msg="Nous ne pouvons pas enregistrer les deux chemins"
         finally:
@@ -122,52 +126,91 @@ def savefiltre():
     msg="msg"
     if request.method == "POST":
         try:
-            newext = "jpg"
-            print(newext)
-            if request.form.get('jpg'):
-                con=sqlite3.connect("databaseProjet.db")
-                con.row_factory=sqlite3.Row
-                cur = con.cursor()
-                id1 = cur.execute("SELECT * FROM DossiersSource ORDER BY idDossierSource DESC LIMIT 1").fetchall()
-                id2 = cur.execute("SELECT * FROM DossiersDestination ORDER BY idDossierDest DESC LIMIT 1").fetchall()
-                con.close()
-                with sqlite3.connect("databaseProjet.db") as con:
-                    # Récupération des id des deux dossiers source et destination :
-                    cur = con.cursor()
-                    print("connexion réussi")
-                    for row in id1:
-                        idSource = str(row[0])
-                        print(idSource)
-                    for row in id2:
-                        idDest = str(row[0])
-                        print(idDest)
-                    fich1 = cur.execute("SELECT * FROM FichiersSource WHERE extensionFichier='jpg' AND idDossierSource=?", (idSource,)).fetchall()
-                    fich2 = cur.execute("SELECT * FROM FichiersDestination WHERE extensionFichier='jpg' AND idDossierDest=?", (idDest,)).fetchall()
-                    print("fich1 =", fich1)
-                    print("fich2 =", fich2)
-                    for row in fich1:
-                        print(row)
-                        print(row[0])
-                        cur.execute("UPDATE FichiersSource SET idFichier=?, idDossierSource=?, nomFichier=?, extensionFichier=?, sizeFichier=?, date_create_Fichier=?, date_modif_Fichier=? WHERE idDossierSource=?", ((str(row[0]),), (str(row[1]),), (str(row[2]),), (str(row[3]),), (str(row[4]),), (str(row[5]),), (str(row[6]),), (str(row[1]),)))
-                        print("update effectué")                    
-                    for row in fich2:
-                        row2 = str(row[0])
-                        cur.execute("UPDATE FichiersDestination SET idFichier=?, idDossierDest=?, nomFichier=?, extensionFichier=?, sizeFichier=?, date_create_Fichier=?, date_modif_Fichier=? WHERE idDossierDest=?", ((str(row[0]),), (str(row[1]),), (str(row[2]),), (str(row[3]),), (str(row[4]),), (str(row[5]),), (str(row[6]),), (str(row[1]),)))
-                        print(row2)
-                    con.commit()
-                    msg="Filtre a bien été pris en compte"
-            else:
-                con.rollback()
-                msg="Filtre n'a pas pu être pris en compte"
-        except:
-            msg="Nous ne pouvons pas appliquer le filtre"
-        finally:
+            checkactive = request.form.getlist('mycheckbox')
+            print(checkactive)
+
             con=sqlite3.connect("databaseProjet.db")
             con.row_factory=sqlite3.Row
             cur = con.cursor()
-            fichSource = cur.execute("SELECT * FROM FichiersSource WHERE idDossierSource=?", (idSource,)).fetchall()
-            fichDest = cur.execute("SELECT * FROM FichiersDestination WHERE idDossierDest=?", (idDest,)).fetchall()
-            return render_template("filtre_comparaison.html", msg=msg, id1=id1, id2=id2, fichSource=fichSource, fichDest=fichDest)
+            row1 = cur.execute("SELECT * FROM DossiersSource ORDER BY idDossierSource DESC LIMIT 1").fetchall()
+            print("select 1 effectué")
+            row2 = cur.execute("SELECT * FROM DossiersDestination ORDER BY idDossierDest DESC LIMIT 1").fetchall()
+            print("select 2 effectué")
+            con.close()
+
+            with sqlite3.connect("databaseProjet.db") as con:
+                # Récupération des id des deux dossiers source et destination :
+                cur = con.cursor()
+                print("connexion réussi")
+                id1 = cur.execute("SELECT * FROM DossiersSource ORDER BY idDossierSource DESC LIMIT 1").fetchall()
+                print("select 3 effectué")
+                id2 = cur.execute("SELECT * FROM DossiersDestination ORDER BY idDossierDest DESC LIMIT 1").fetchall()
+                print("select 4 effectué")
+                for row in id1:
+                    idSource = str(row[0])
+                    dossierSource = str(row[1])
+                    print(idSource)
+                    print(dossierSource)
+                for row in id2:
+                    idDest = str(row[0])
+                    dossierDestination = str(row[1])
+                    print(idDest)
+                    print(dossierDestination)
+                    
+                id3 = cur.execute("SELECT idFichier FROM FichiersSource where idDossierSource=?", (idSource,)).fetchall()
+                print("select 3 effectué")
+                id4 = cur.execute("SELECT idFichier FROM FichiersDestination where idDossierDest=?", (idDest,)).fetchall()
+                print("select 4 effectué")
+                idFichierSource = []
+                idFichierDest = []
+                for row in id3:
+                    idFichierSource.append(str(row[0]))
+                print("id fichier source :", idFichierSource)
+                for row in id4:
+                    idFichierDest.append(str(row[0]))
+                print(idFichierDest)
+
+                # Suppression de l'ancienne table :
+                cur = con.cursor()
+                print("connexion 2 réussi avant suppresion")
+                for element in idFichierSource:
+                    cur.execute("DELETE FROM FichiersSource where idFichier=?", (int(element),))
+                print("la table DossiersSource a bien était supprimée")
+                for element in idFichierDest:
+                    cur.execute("DELETE FROM FichiersDestination where idFichier=?", (int(element),))
+                print("la table DossiersDestination a bien était supprimée")
+        except:
+            con.rollback()
+            msg="Nous ne pouvons pas appliquer le filtre"
+        finally:
+            with sqlite3.connect("databaseProjet.db") as con:
+                cur = con.cursor()
+
+                FichiersS = selectFichier(dossierSource)
+                FichiersD = selectFichier(dossierDestination)
+
+                for cle, valeur in FichiersS.items():
+                    for ext in checkactive:
+                        if valeur[1] == ext:
+                            cur.execute("INSERT INTO FichiersSource (idDossierSource, nomFichier, extensionFichier, sizeFichier, date_create_Fichier, date_modif_Fichier) values (?,?,?,?,?,?)", (int(idSource), valeur[0], valeur[1], valeur[2], valeur[3], valeur[4]))
+                print("insert 1 effectué")
+                for cle, valeur in FichiersD.items():
+                    for ext in checkactive:
+                        if valeur[1] == ext:
+                            cur.execute("INSERT INTO FichiersDestination (idDossierDest, nomFichier, extensionFichier, sizeFichier, date_create_Fichier, date_modif_Fichier) values (?,?,?,?,?,?)", (int(idDest), valeur[0], valeur[1], valeur[2], valeur[3], valeur[4]))
+                print("insert 2 effectué")
+                
+                con.commit()
+                msg="Le filtre a bien été pris en compte, ci-dessous la comparaison des deux dossiers :"
+                con=sqlite3.connect("databaseProjet.db")
+                print("connexion finale réussi")
+                con.row_factory=sqlite3.Row
+                cur = con.cursor()
+                fichSource = cur.execute("SELECT * FROM FichiersSource WHERE idDossierSource=?", (idSource,)).fetchall()
+                print("select 1 réussi")
+                fichDest = cur.execute("SELECT * FROM FichiersDestination WHERE idDossierDest=?", (idDest,)).fetchall()
+                print("select 2 réussi")
+            return render_template("filtre_comparaison.html", msg=msg, row1=row1, row2=row2, fichSource=fichSource, fichDest=fichDest)
 
 @app.route('/synchronisation/')
 def synchronisation():
