@@ -30,7 +30,7 @@ Focntionnement par onglet :
     - Interface Web et serveur python Flask
     - L'interface est composée de trois parties :
         1. Accueil : qui permet de rensigner les chemins des deux dossiers que l'on veut synchroniser --> format des chemins à renseigner : C:\Users\utilisateur\Documents\NomDossier
-        3. Comparaison : qui permet de voir le contenu de nos deux fichiers ainsi que de pouvoir sélectionner un filtre si besoin
+        3. Comparaison : qui permet de voir le contenu de nos deux fichiers ainsi que de pouvoir sélectionner un filtre si besoin --> bien penser à valider notre filtre pour passer à la synchronisation !
         4. Synchronisation : qui permet de synchronisaer les deux dossiers (en uni-directionnelle)
 
 2. **Comparaison de dossiers et de fichiers (taille, date de modification, date de création)** :
