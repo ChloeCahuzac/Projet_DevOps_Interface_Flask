@@ -225,7 +225,9 @@ def savefiltre():
 
 @app.route('/synchronisation/')
 def synchronisation():
-    return render_template("synchronisation.html")
+    if request.method == "GET":
+        msg="Attention avant de lancer la synchronisation assurez vous d'avoir appliqué un filtre dans l'onglet comparaison"
+        return render_template("synchronisation.html", msg=msg)
 
 @app.route('/save_synchronisation/', methods=["POST", "GET"])
 def save_synchronisation():
