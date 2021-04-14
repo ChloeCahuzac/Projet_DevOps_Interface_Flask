@@ -153,6 +153,7 @@ def savefiltre():
     msg="msg"
     if request.method == "POST":
         try:
+            global checkactive
             # Récupération des checkbox renseignés par l'utilisateur :
             checkactive = request.form.getlist('mycheckbox')
             # Récupération des chemins des dossiers rentrés par l'utilisateur dans la page accueil.html pour permettre leur affichage :
@@ -230,10 +231,6 @@ def synchronisation():
 def save_synchronisation():
     if request.method == "POST":
         try:
-            # Récupération des checkbox renseignés par l'utilisateur :
-            checkactive = request.form.getlist('mycheckbox')
-            for ext in checkactive:
-                print("checkactive :", ext)
             # Récupération des chemins des dossiers rentrés par l'utilisateur dans la page accueil.html pour permettre leur affichage :
             con=sqlite3.connect("databaseProjet.db")
             con.row_factory=sqlite3.Row
@@ -277,30 +274,34 @@ def save_synchronisation():
         except:
             msg="Impossible d'effectuer la synchronisation"
         finally:
-            # Copiage des fichiers en local :
+            with sqlite3.connect("databaseProjet.db") as con:
+                cur = con.cursor()
+                # Copiage des fichiers en local :
 
-            # Sélection des fichiers dans le dossier local :
-            FichiersS = selectFichier(cheminDossierSource)
-            FichiersD = selectFichier(cheminDossierDest)
-            nameFichier1 = []
-            nameFichier2 = []
-            # Récuération des noms et ajout de leur extension :
-            for cle, valeur1 in FichiersS.items():
-                nameFichier1.append(valeur1[0] + "." + valeur1[1])
-            print("namefichier1 : ", nameFichier1)
+                # Sélection des fichiers dans le dossier local :
+                FichiersS = selectFichier(cheminDossierSource)
+                FichiersD = selectFichier(cheminDossierDest)
+                nameFichier1 = []
+                nameFichier2 = []
+                # Récuération des noms et ajout de leur extension :
+                for cle, valeur1 in FichiersS.items():
+                    if valeur1[1] in checkactive:
+                            nameFichier1.append(valeur1[0] + "." + valeur1[1])
+                print("namefichier1 : ", nameFichier1)
 
-            for cle, valeur2 in FichiersD.items():
-                nameFichier2.append(valeur2[0] + "." + valeur2[1])
-            print("namefichier2 : ", nameFichier2)
-            # Copie des fichiers :
-            for nameSource in nameFichier1:
-                if nameSource in nameFichier2:
-                    print("le fichier existe déjà")
-                else:
-                    cheminfinal = (cheminDossierDest + "/" + nameSource)
-                    cheminsource = (cheminDossierSource + "/" + nameSource)
-                    shutil.copyfile(cheminsource, cheminfinal)
-                    print("le fichier n'existe pas, il a donc était copié")
+                for cle, valeur2 in FichiersD.items():
+                    if valeur1[1] in checkactive:
+                            nameFichier2.append(valeur2[0] + "." + valeur2[1])
+                print("namefichier2 : ", nameFichier2)
+                # Copie des fichiers :
+                for nameSource in nameFichier1:
+                    if nameSource in nameFichier2:
+                        print("le fichier existe déjà")
+                    else:
+                        cheminfinal = (cheminDossierDest + "/" + nameSource)
+                        cheminsource = (cheminDossierSource + "/" + nameSource)
+                        shutil.copyfile(cheminsource, cheminfinal)
+                        print("le fichier n'existe pas, il a donc était copié")
 
             # for nameDest in nameFichier2:
             #     if nameDest not in nameFichier1:
