@@ -25,7 +25,7 @@ Choix de fonctionnement :
 Fonctionnement global :
 - Cette application utilise une base de données sqlite3 qui permet d'enregistrer les résultats en fonction de la requêtes données
 
-Focntionnement par onglet :
+Fonctionnement par onglet :
 1. **Interface (console avec input et menu)** :
     - Interface Web et serveur python Flask
     - L'interface est composée de trois parties :
@@ -40,3 +40,7 @@ Focntionnement par onglet :
 3. **Si arrêt du programme** :
     - Pouvoir faire une reprise avec la liste des fichiers à synchroniser grâce à une base de données SQLite qui a enregistrer la liste des fichiers à synchroniser
       avec bien sûr le type de synchro (local)
+     
+## Informations consernant les erreurs :
+1. Ne pas avoir de nom de fichier comportant de "." avant l'extension
+2. Toujours valider l'application du filtre
