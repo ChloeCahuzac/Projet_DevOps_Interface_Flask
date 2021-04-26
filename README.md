@@ -2,24 +2,27 @@
 
 ### Projet mi-parcours : Interface Web Python Flask
 
-## Pré-requis:
+## Environnement :
+Windows
+
+## Démarrage de l'application :
 1. Ouvrir un invité de commande
 2. Créer un environnement virtuel dans le dossier Projet_DevOps_Interface_Flask contenant tous les fichiers du projet :
-```bash
-> cd Projet_DevOps_Interface_Flask | py -m venv venv
-```
+    ```bash
+    > cd Projet_DevOps_Interface_Flask | py -m venv venv
+    ```
 3. Activer cet envrionnement :
-```bash
-> venv\Scripts\activate
-```
+    ```bash
+    > venv\Scripts\activate
+    ```
 4. Installer Flask :
-```bash
-(venv) > pip install Flask
-```
+    ```bash
+    (venv) > pip install Flask
+    ```
 5. Lancer le code projet.py :
-```bash
-(venv) > py projet.py
-```
+    ```bash
+    (venv) > py projet.py
+    ```
 
 Aide pour l'installation : https://flask.palletsprojects.com/en/1.1.x/installation/
 
