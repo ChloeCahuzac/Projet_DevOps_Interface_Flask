@@ -3,10 +3,23 @@
 ### Projet mi-parcours : Interface Web Python Flask
 
 ## Pré-requis:
-1. Créer un environnement virtuel
-2. Activer cet envrionnement
-3. Installer Flask (pip install Flask)
-4. Lancer le code projet.py
+1. Ouvrir un invité de commande
+2. Créer un environnement virtuel dans le dossier Projet_DevOps_Interface_Flask contenant tous les fichiers du projet :
+```bash
+> cd Projet_DevOps_Interface_Flask | py -m venv venv
+```
+3. Activer cet envrionnement :
+```bash
+> venv\Scripts\activate
+```
+4. Installer Flask :
+```bash
+(venv) > pip install Flask
+```
+5. Lancer le code projet.py :
+```bash
+(venv) > py projet.py
+```
 
 Aide pour l'installation : https://flask.palletsprojects.com/en/1.1.x/installation/
 
@@ -29,7 +42,7 @@ Fonctionnement par onglet :
 1. **Interface (console avec input et menu)** :
     - Interface Web et serveur python Flask
     - L'interface est composée de trois parties :
-        1. Accueil : qui permet de rensigner les chemins des deux dossiers que l'on veut synchroniser --> format des chemins à renseigner : C:\Users\utilisateur\Documents\NomDossier
+        1. Accueil : qui permet de renseigner les chemins des deux dossiers que l'on veut synchroniser --> format des chemins à renseigner : C:\Users\utilisateur\Documents\NomDossier
         3. Comparaison : qui permet de voir le contenu de nos deux fichiers ainsi que de pouvoir sélectionner un filtre si besoin --> bien penser à valider notre filtre pour passer à la synchronisation !
         4. Synchronisation : qui permet de synchronisaer les deux dossiers (en uni-directionnelle)
 
