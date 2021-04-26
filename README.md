@@ -23,6 +23,9 @@ Windows
     ```bash
     (venv) > py projet.py
     ```
+6. Ouvrir un navigateur internet
+
+7. Entrer l'URL suivant : http://localhost:5000/accueil
 
 Aide pour l'installation : https://flask.palletsprojects.com/en/1.1.x/installation/
 
